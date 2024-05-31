@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import SectionWrapper from "./SectionWrapper";
 import { SCHEMES, WORKOUTS } from "../utils/swoldier";
 import Button from "./Button";
+
+// Component for the header section
 function Header(props) {
   const { index, title, description } = props;
   return (
@@ -16,15 +18,19 @@ function Header(props) {
     </div>
   );
 }
+
+// Main component for the generator section
 export default function Generator(props) {
-    const {muscles, setMuscles, poison, setPoison, goal, setGoal, updateWorkout} = props
+  // Destructuring props
+  const {muscles, setMuscles, poison, setPoison, goal, setGoal, updateWorkout} = props
   const [showModal, setShowModal] = useState(false);
   
-
+  // Function to toggle the modal visibility
   function toggleModal() {
     setShowModal(!showModal);
   }
 
+  // Function to update selected muscles
   function updateMuscles(muscleGroup) {
     if (muscles.includes(muscleGroup)) {
       setMuscles(muscles.filter((val) => val !== muscleGroup));
@@ -49,16 +55,18 @@ export default function Generator(props) {
 
   return (
     <SectionWrapper
-    id={'generate'}
+      id={'generate'}
       header={"generate your workout"}
-      title={["It's", "Huge", "o'clock"]}
+      title={["It's", "Gym", "o'clock!"]}
     >
+      {/* Section 01: choose your adventure */}
       <Header
         index={"01"}
-        title={"Pick your poison"}
-        description={"Select the workout you wish to endure."}
+        title={"Choose Your Adventure"}
+        description={"Select based on workouts per week (4 days, 3 days, 6 days or 2 days per week)"}
       ></Header>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {/* Render buttons for different workout types */}
         {Object.keys(WORKOUTS).map((type, typeIndex) => {
           return (
             <button
@@ -77,12 +85,15 @@ export default function Generator(props) {
           );
         })}
       </div>
+      
+      {/* Section 02: Lock on targets */}
       <Header
         index={"02"}
-        title={"Lock on targets"}
-        description={"Select the muscles judged for annihilation."}
+        title={"Muscle Focus"}
+        description={"Select the muscles you wish to train."}
       ></Header>
       <div className="bg-slate-950 border border-solid border-blue-400 rounded-lg flex flex-col">
+        {/* Button to toggle modal for selecting muscles */}
         <button
           onClick={toggleModal}
           className="relative p-3 flex items-center justify-center"
@@ -92,6 +103,7 @@ export default function Generator(props) {
           </p>
           <i className="fa-solid absolute right-3 top-1/2 -translate-y-1/2 fa-caret-down"></i>
         </button>
+        {/* Modal to select muscles */}
         {showModal && (
           <div className="flex flex-col px-3 pb-3">
             {(poison === "individual"
@@ -118,12 +130,15 @@ export default function Generator(props) {
           </div>
         )}
       </div>
+      
+      {/* Section 03: Execute */}
       <Header
         index={"03"}
-        title={"Become Juggernaut"}
-        description={"Select your ultimate objective."}
+        title={"Execute"}
+        description={"Select your training style."}
       ></Header>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Render buttons for different workout schemes */}
         {Object.keys(SCHEMES).map((scheme, schemeIndex) => {
           return (
             <button
@@ -141,7 +156,10 @@ export default function Generator(props) {
           );
         })}
       </div>
-      <Button func={updateWorkout} text={"Formulate"}/>
+      
+      {/* Button to update workout */}
+      <Button func={updateWorkout} text={"Generate Workout"}/>
     </SectionWrapper>
   );
 }
+

@@ -1,6 +1,9 @@
 import { EXERCISES, SCHEMES, TEMPOS, WORKOUTS } from "./swoldier"
+
+// Flatten the exercises object
 const exercises = exercisesFlattener(EXERCISES)
 
+// Function to generate a workout
 export function generateWorkout(args) {
     const { muscles, poison: workout, goal } = args
     let exer = Object.keys(exercises);
@@ -9,18 +12,21 @@ export function generateWorkout(args) {
     let numSets = 5;
     let listOfMuscles;
 
+    // Determine the list of muscles to target based on the workout type
     if (workout === "individual") {
         listOfMuscles = muscles;
     } else {
         listOfMuscles = WORKOUTS[workout][muscles[0]];
     }
 
+    // Shuffle and set the list of muscles
     listOfMuscles = new Set(shuffleArray(listOfMuscles));
     let arrOfMuscles = Array.from(listOfMuscles);
     let scheme = goal
+
+    // Generate sets of exercises based on the selected scheme
     let sets = SCHEMES[scheme].ratio
         .reduce((acc, curr, index) => {
-            //make this compound and exercise muscle -> array of objects and destructure in loop
             return [
                 ...acc,
                 ...[...Array(parseInt(curr)).keys()].map((val) =>
@@ -42,6 +48,7 @@ export function generateWorkout(args) {
             ];
         }, []);
 
+    // Filter exercises based on included muscles and compound/accessory type
     const { compound: compoundExercises, accessory: accessoryExercises } =
         exer.reduce(
             (acc, curr) => {
@@ -64,6 +71,7 @@ export function generateWorkout(args) {
             { compound: {}, accessory: {} }
         );
 
+    // Generate workout sets
     const genWOD = sets.map(({ setType, muscleGroup }) => {
         const data =
             setType === "compound" ? compoundExercises : accessoryExercises;
@@ -72,7 +80,6 @@ export function generateWorkout(args) {
                 includedTracker.includes(curr) ||
                 !data[curr].muscles.includes(muscleGroup)
             ) {
-                // if (includedTracker.includes(curr)) { console.log('banana', curr) }
                 return acc;
             }
             return { ...acc, [curr]: exercises[curr] };
@@ -90,12 +97,11 @@ export function generateWorkout(args) {
             Math.floor(Math.random() * filteredOppList.length)
             ];
 
-        // console.log(randomExercise)
-
         if (!randomExercise) {
             return {};
         }
 
+        // Calculate reps or duration based on exercise unit and tempo
         let repsOrDuraction =
             exercises[randomExercise].unit === "reps"
                 ? Math.min(...SCHEMES[scheme].repRanges) +
@@ -116,7 +122,6 @@ export function generateWorkout(args) {
                 repsOrDuraction = Math.floor(85 / tempoSum);
             }
         } else {
-            //set to nearest 5 seconds
             repsOrDuraction = Math.ceil(parseInt(repsOrDuraction) / 5) * 5;
         }
         includedTracker.push(randomExercise);
@@ -130,11 +135,13 @@ export function generateWorkout(args) {
         };
     });
 
+    // Return generated workout
     return genWOD.filter(
         (element) => Object.keys(element).length > 0
     );
 }
 
+// Function to shuffle an array
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1))
@@ -145,6 +152,7 @@ function shuffleArray(array) {
     return array
 }
 
+// Function to flatten exercise object
 function exercisesFlattener(exercisesObj) {
     const flattenedObj = {}
 

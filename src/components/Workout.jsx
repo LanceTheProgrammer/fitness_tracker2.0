@@ -8,8 +8,8 @@ export default function Workout(props) {
     <div>
       <SectionWrapper
       id={'workout'}
-      header={"Welcome To"}
-      title={["The", "DANGER", "zone"]}
+      header={""}
+      title={["", "Alakazam!"]}
     >
         <div className='flex flex-col gap-4'>
             {workout.map((exercise, i)=>{
